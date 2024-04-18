@@ -11,39 +11,63 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 const app = express();
 app.use(bodyParser.json());
 
+// function getWeekRange(startDate, endDate) {
+//     const start = new Date(startDate);
+//     const end = new Date(endDate);
+
+//     // Calculate the difference in milliseconds
+//     const diff = end - start;
+
+//     // Calculate the difference in days
+//     const diffDays = diff / (1000 * 60 * 60 * 24);
+
+//     // Check if the difference is exactly 7 days
+//     if (diffDays !== 6) { // 6 because it's zero-based and includes both start and end dates
+//         return res.status(404).json({ error: 'Selected range should be exactly 7 days.' });
+//     }
+
+//     return {
+//         start: start.toISOString().split('T')[0], // Format: YYYY-MM-DD
+//         end: end.toISOString().split('T')[0]      // Format: YYYY-MM-DD
+//     };
+// }
+
+
 const weakly = async (req, res) => {
-    const month = req.params.month
-    const year = req.params.year
+    const startDate = req.query.startDate
+    const endDate = req.query.endDate
 
-    if (month === '01' || month === '03' || month === "05" || month === '07' || month === '08' || month === '10' || month === '12') {
-        const startDate = `01/${month}/${year}`
-        const endDate = `31/${month}/${year}`
-    }
-    else if(month === '04' || month === '06' || month === '09' || month === '11') {
-        const startDate = `01/${month}/${year}`
-        const endDate = `30/${month}/${year}`
-    }
-    else {
-        const startDate = `01/02/${year}`
-        const endDate = `28/02/${year}`
-    }
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
+    console.log("start : ", start, "end : ", end)
+    // Calculate the difference in milliseconds
+    const diff = end - start;
 
+    // Calculate the difference in days
+    const diffDays = diff / (1000 * 60 * 60 * 24);
 
-    const { data: sampleData, error: fetchError } = await supabase
-        .from('sample')
-        .select('*')
-        .gt("Date", startDate)
-        .lt("Date", endDate)
-
-    if (!sampleData) {
-        return res.status(401).json({ error: "No Data" })
-    }
-    if (fetchError) {
-        return res.status(401).json({ error: fetchError.message })
+    // Check if the difference is exactly 7 days
+    if (diffDays !== 6) { // 6 because it's zero-based and includes both start and end dates
+        return res.status(404).json({ error: 'Selected range is not 7 days(a week).' });
     } else {
-        return res.status(200).json({ sampleData })
+        const { data: sampleData, error: fetchError } = await supabase
+            .from('sample')
+            .select('*')
+            .gt("Date", startDate)
+            .lt("Date", endDate)
+
+        if (!sampleData) {
+            return res.status(401).json({ error: "No Data" })
+        }
+        if (fetchError) {
+            return res.status(401).json({ error: fetchError.message })
+        } else {
+            return res.status(200).json({ sampleData })
+        }
     }
+
+
 };
 
 module.exports = weakly

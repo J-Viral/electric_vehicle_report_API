@@ -13,6 +13,10 @@ app.use(bodyParser.json());
 
 const yearly = async (req, res) => {
     const year = req.query.year
+
+    if(!year) {
+        return res.status(404).json({error: "Field Is empty!"})
+    }
     const startDate = `${year}/01/01`
     const endDate = `${year}/12/31`
 

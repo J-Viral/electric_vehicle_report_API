@@ -13,6 +13,9 @@ app.use(bodyParser.json());
 const monthly = async (req, res) => {
     const month = req.query.month
     const year = req.query.year
+    if(!month || !year) {
+        return res.status(404).json({error: "Field Is empty!"})
+    }
     let startDate = 0
     let endDate = 0
 

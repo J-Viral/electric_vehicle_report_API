@@ -11,31 +11,13 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 const app = express();
 app.use(bodyParser.json());
 
-// function getWeekRange(startDate, endDate) {
-//     const start = new Date(startDate);
-//     const end = new Date(endDate);
-
-//     // Calculate the difference in milliseconds
-//     const diff = end - start;
-
-//     // Calculate the difference in days
-//     const diffDays = diff / (1000 * 60 * 60 * 24);
-
-//     // Check if the difference is exactly 7 days
-//     if (diffDays !== 6) { // 6 because it's zero-based and includes both start and end dates
-//         return res.status(404).json({ error: 'Selected range should be exactly 7 days.' });
-//     }
-
-//     return {
-//         start: start.toISOString().split('T')[0], // Format: YYYY-MM-DD
-//         end: end.toISOString().split('T')[0]      // Format: YYYY-MM-DD
-//     };
-// }
-
-
 const weakly = async (req, res) => {
     const startDate = req.query.startDate
     const endDate = req.query.endDate
+
+    if(!startDate || !endDate) {
+        return res.status(404).json({error: "Field Is empty!"})
+    }
 
     const start = new Date(startDate);
     const end = new Date(endDate);

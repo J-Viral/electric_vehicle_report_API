@@ -14,6 +14,10 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 const daily = async (req, res) => {
     const date = req.query.date
 
+    if(!date) {
+        return res.status(404).json({error: "Field is empty!"})
+    }
+
     const { data: validateData, error: validateError } = await supabase
         .from('sample')
         .select()

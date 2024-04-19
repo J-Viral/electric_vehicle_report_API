@@ -1,14 +1,22 @@
-const express = require('express');
-const article = require('./src/controller')
+const express = require("express");
+const article = require("./src/controller");
+const cors = require("cors");
 
 const app = express();
-const port = 3000;
+const port = 8000;
 
-//app.use(bodyParser.json());
-app.use(express.json())
-app.use('/', article)
+app.use(express.json());
 
-//Starting Server.
+// Apply CORS middleware
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"],
+  })
+);
+
+app.use("/", article);
+
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });

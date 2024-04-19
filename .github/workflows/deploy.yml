@@ -31,12 +31,9 @@ jobs:
       - name: Install step
         run: "npm i"
 
-      - name: Build step
-        run: "npm start"
-
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "j-viral-electric-ve-29"
-          entrypoint: "index.js"
-          root: "/"
+          entrypoint: ""
+          root: ""

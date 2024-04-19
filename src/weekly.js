@@ -49,7 +49,20 @@ const weakly = async (req, res) => {
 
     // Check if the difference is exactly 7 days
     if (diffDays !== 6) { // 6 because it's zero-based and includes both start and end dates
-        return res.status(404).json({ error: 'Selected range is not 7 days(a week).' });
+        return res.status(404).json({ error: 'Selected range is not a week range i.e. 7 days frequency. Please select a proper frequency.' });
+    } else {
+
+        const { data: validateData, error: validateError } = await supabase
+        .from('sample')
+        .select()
+        .gt("Date", startDate)
+        .lt("Date", endDate)
+
+    if (validateError) {
+        return res.status(404).json({ error: validateError.message });
+    }
+    if (!validateData || validateData.length === 0) {
+        return res.status(404).json({ error: "No records found for the provided frequency" });
     } else {
         const { data: sampleData, error: fetchError } = await supabase
             .from('sample')
@@ -65,6 +78,8 @@ const weakly = async (req, res) => {
         } else {
             return res.status(200).json({ sampleData })
         }
+    }
+        
     }
 
 
